@@ -10,6 +10,7 @@ class ContentFromUrlParser
   def contents
     @parsed_content ||= get_content
     {
+      error: @parsed_content[:error],
       h1: @parsed_content[:h1s],
       h2: @parsed_content[:h2s],
       h3: @parsed_content[:h3s],
@@ -22,6 +23,12 @@ class ContentFromUrlParser
   def get_content
     result = ActiveSupport::HashWithIndifferentAccess.new
     doc = scrape_page
+
+    # check error
+    if doc == 'error'
+      result['error'] = true
+      return result
+    end
 
     # get contents of header tags
     ['h1', 'h2', 'h3'].each do |tag|
@@ -40,6 +47,11 @@ class ContentFromUrlParser
   end
 
   def scrape_page
-    @page ||= Nokogiri::HTML(open(page_url))
+    @page ||=
+      begin
+        Nokogiri::HTML(open(page_url))
+      rescue
+        'error'
+      end
   end
 end

@@ -8,7 +8,19 @@ RSpec.describe ContentsController, type: :request do
     let(:bad_url) { {content: {page_url: inaccessible_url}} }
 
     it 'creates a new content and have success response' do
-      expect{post '/contents', params: good_url}.to change(Content, :count).by 1
+      expect{
+        post '/contents', params: good_url
+        resp = JSON.parse(response.body)
+        expect(resp['message']).to eq 'success'
+      }.to change(Content, :count).by 1
+    end
+
+    it 'should have a failed response message when supplied url is in-accessible' do
+      expect{
+        post '/contents', params: bad_url
+        resp = JSON.parse(response.body)
+        expect(resp['message']).to eq 'failed'
+      }.not_to change(Content, :count)
     end
   end
 end
