@@ -1,13 +1,18 @@
 class ContentsController < ApplicationController
   def create
-    parser = ContentFromUrlParser.new()
+    parser = ContentFromUrlParser.new(content_params[:page_url])
 
-    content = parser.get_content
+    content = Content.new(parser.contents)
 
     if content.save
       render json: {message: 'success', content: content.as_json}, status: :created
     else
       render json: {message: 'failed', error: content.errors.full_messages}, status: :unprocessable_entity
     end
+  end
+
+  private
+  def content_params
+    params.require(:content).permit(:page_url)
   end
 end
