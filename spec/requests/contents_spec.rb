@@ -57,5 +57,12 @@ RSpec.describe ContentsController, type: :request do
         end
       end
     end
+
+    describe 'deleting an existing content from the system' do
+      it 'should work' do
+        content = create(:content)
+        expect{delete "/contents/#{content.id}"}.to change(Content, :count).by -1
+      end
+    end
   end
 end

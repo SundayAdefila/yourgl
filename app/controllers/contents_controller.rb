@@ -18,6 +18,13 @@ class ContentsController < ApplicationController
     end
   end
 
+  def destroy
+    content = Content.find(params[:id])
+    content.destroy
+
+    render json: {message: 'success'}, status: :no_content
+  end
+
   private
   def content_params
     params.require(:content).permit(:page_url)
