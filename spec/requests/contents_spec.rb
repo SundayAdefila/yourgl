@@ -64,5 +64,17 @@ RSpec.describe ContentsController, type: :request do
         expect{delete "/contents/#{content.id}"}.to change(Content, :count).by -1
       end
     end
+
+    describe 'viewing a single previously saved content' do
+      it 'should work' do
+        content = create(:content)
+        get "/contents/#{content.id}"
+        resp = JSON.parse(response.body)['content']
+
+        content.attributes.except('created_at', 'updated_at').each do |attr, value|
+          expect(resp[attr]).to eq value
+        end
+      end
+    end
   end
 end
