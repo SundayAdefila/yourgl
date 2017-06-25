@@ -1,4 +1,11 @@
 class ContentsController < ApplicationController
+
+  def index
+    contents = Content.all
+
+    render json: {contents: contents.as_json}
+  end
+
   def create
     parser = ContentFromUrlParser.new(content_params[:page_url])
 

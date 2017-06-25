@@ -22,5 +22,14 @@ RSpec.describe ContentsController, type: :request do
         expect(resp['message']).to eq 'failed'
       }.not_to change(Content, :count)
     end
+
+    describe 'getting existing parsed contents' do
+      it 'returns all existing contents from db by default' do
+        create_list(:content, 5)
+        get '/contents'
+
+        expect(JSON.parse(response.body)['contents'].count).to eq 5
+      end
+    end
   end
 end
