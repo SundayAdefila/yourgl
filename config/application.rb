@@ -27,5 +27,8 @@ module Yourgl
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
+
+    # defaults per_page to two for when paginate is set to true in request.
+    config.contents_per_page = ENV['CONTENTS_PER_PAGE'] || 2
   end
 end

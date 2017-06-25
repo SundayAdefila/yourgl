@@ -1,9 +1,9 @@
 class ContentsController < ApplicationController
 
   def index
-    contents = Content.all
+    contents = ContentsApi.new(params).get_objs
 
-    render json: {contents: contents.as_json}
+    render json: contents.as_json
   end
 
   def create

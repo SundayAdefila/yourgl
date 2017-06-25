@@ -27,8 +27,34 @@ RSpec.describe ContentsController, type: :request do
       it 'returns all existing contents from db by default' do
         create_list(:content, 5)
         get '/contents'
-
         expect(JSON.parse(response.body)['contents'].count).to eq 5
+      end
+
+      context 'when paginate is set true in request' do
+        # NOTE: per_page is defaulted to 2 in application.rb
+        before do
+          @contents = create_list(:content, 9)
+        end
+
+        it 'returns only the set "per_page" number of contents' do
+          get '/contents?paginate=true'
+          expect(JSON.parse(response.body)['contents'].count).to eq 2
+        end
+
+        it 'returns the correct contents for a given page' do
+          get '/contents?paginate=true&page_count=3'
+          expect(JSON.parse(response.body)['contents'].map{|c| c['id']}).to eq [@contents[6].id, @contents[7].id]
+        end
+
+        it 'sets "next_page" to true when not on last page' do
+          get '/contents?paginate=true&page_count=3'
+          expect(JSON.parse(response.body)['next_page']).to be_truthy
+        end
+
+        it 'sets "next_page" to false when not on last page' do
+          get '/contents?paginate=true&page_count=4'
+          expect(JSON.parse(response.body)['next_page']).to be_falsey
+        end
       end
     end
   end
